@@ -55,7 +55,7 @@ export default async function NotesPage({
     queryFn: () =>
       fetchNotes({
         page: 1,
-        perPage: 12,
+        perPage: 10,
         search: "",
         ...(tag ? { tag } : {}),
       }),
