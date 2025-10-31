@@ -22,14 +22,18 @@ interface FetchNotesParams {
 }
 
 type SortBy = "title" | "createdAt" | "updatedAt";
-
-export interface RegisterRequest {
+interface UserData {
   email: string;
   password: string;
 }
 
-interface CheckSessionResponse {
-    success: boolean;
+interface SessionResponse {
+  success: boolean;
+}
+
+interface UpdateUserData {
+  email?: string;
+  name?: string;
 }
 
 export async function fetchNotes(
@@ -49,7 +53,7 @@ export async function createNote(
 }
 
 export async function deleteNote(id: string): Promise<void> {
-  await nextApi.delete<Note>(`/notes/${id}`, {});
+  await nextApi.delete<Note>("/notes/${id}", {});
 }
 
 export async function getNoteById(id: string): Promise<Note> {
@@ -57,31 +61,34 @@ export async function getNoteById(id: string): Promise<Note> {
   return res.data;
 }
 
-export async function register(data: RegisterRequest) {
-  const res = await nextApi.post<User>("/auth/register", data);
+export async function registerUser(userData: UserData): Promise<User> {
+  const res = await nextApi.post<User>("/auth/register", userData);
   return res.data;
 }
 
-export async function login(data: RegisterRequest) {
-  const res = await nextApi.post<User>("/auth/login", data);
+export async function loginUser(userData: UserData): Promise<User> {
+  const res = await nextApi.post<User>("/auth/login", userData);
   return res.data;
 }
 
-export async function logout() {
-  const res = await nextApi.post<User>("/auth/logout");
+export async function logoutUser(): Promise<void> {
+  await nextApi.post("/auth/logout");
+}
+
+export async function checkSession(): Promise<SessionResponse> {
+  const res = await nextApi.get("/auth/session");
+  if (res.status === 200) {
+    return { success: true };
+  }
+  return { success: false };
+}
+
+export async function getUser(): Promise<User> {
+  const res = await nextApi.get("/users/me");
   return res.data;
 }
 
-export async function checkSession() {
-    const res = await nextApi.get<CheckSessionResponse>("/auth/session");
-    if (res.status === 200) {
-        { return {success: true} }
-    }
-return {success: false}
- 
-}
-
-export async function getUser() {
-  const res = await nextApi.get<User>("/users/me");
+export async function updateMe(userData: UpdateUserData): Promise<User> {
+  const res = await nextApi.patch<User>("/users/me", userData);
   return res.data;
 }

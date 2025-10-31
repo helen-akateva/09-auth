@@ -9,7 +9,7 @@ interface Props {
   children: React.ReactNode;
 }
 
-const AuthProvider = ({ children }: Props) => {
+export default function AuthProvider ({ children }: Props) {
   const setUser = useAuthStore((state) => state.setUser);
   const clearIsAuthenticated = useAuthStore(
     (state) => state.clearIsAuthenticated
@@ -33,4 +33,4 @@ const AuthProvider = ({ children }: Props) => {
   return children;
 };
 
-export default AuthProvider;
+
