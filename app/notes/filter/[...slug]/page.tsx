@@ -3,10 +3,10 @@ import {
   HydrationBoundary,
   QueryClient,
 } from "@tanstack/react-query";
-import { fetchNotes } from "@/lib/api";
 import { NoteTag } from "@/types/note";
 import NotesClientFilter from "./Notes.client";
 import { Metadata } from "next";
+import { fetchNotes } from "@/lib/clientApi";
 
 
 export async function generateMetadata({
