@@ -22,6 +22,7 @@ interface FetchNotesParams {
 }
 
 type SortBy = "title" | "createdAt" | "updatedAt";
+
 interface UserData {
   email: string;
   password: string;
@@ -88,7 +89,7 @@ export async function getUser(): Promise<User> {
   return res.data;
 }
 
-export async function updateMe(userData: UpdateUserData): Promise<User> {
+export async function updateUser(userData: UpdateUserData): Promise<User> {
   const res = await nextApi.patch<User>("/users/me", userData);
   return res.data;
 }
