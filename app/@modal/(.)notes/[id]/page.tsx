@@ -1,4 +1,5 @@
-import { getNoteById } from "@/lib/api";
+
+import { getNoteById } from "@/lib/api/clientApi";
 import NotePreviewClient from "./NotePreview.client";
 import {
   dehydrate,

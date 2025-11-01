@@ -6,7 +6,7 @@ import {
 import { NoteTag } from "@/types/note";
 import NotesClientFilter from "./Notes.client";
 import { Metadata } from "next";
-import { fetchNotes } from "@/lib/clientApi";
+import { fetchNotes } from "@/lib/api/clientApi";
 
 
 export async function generateMetadata({

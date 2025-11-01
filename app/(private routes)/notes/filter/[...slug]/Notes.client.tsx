@@ -10,7 +10,7 @@ import { useDebounce } from "use-debounce";
 import { NoteTag } from "@/types/note";
 import css from "./NotesPage.module.css";
 import Link from "next/link";
-import { fetchNotes } from "@/lib/clientApi";
+import { fetchNotes } from "@/lib/api/clientApi";
 
 interface NotesClientProps {
   tag: NoteTag | "all";

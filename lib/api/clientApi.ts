@@ -1,5 +1,5 @@
+import { Note, NoteTag } from "@/types/note";
 import { User } from "@/types/user";
-import type { Note, NoteTag } from "../types/note";
 import { nextApi } from "./api";
 
 interface FetchNotesResponse {
@@ -54,11 +54,11 @@ export async function createNote(
 }
 
 export async function deleteNote(id: string): Promise<void> {
-  await nextApi.delete<Note>("/notes/${id}", {});
+  await nextApi.delete<Note>(`/notes/${id}`);
 }
 
 export async function getNoteById(id: string): Promise<Note> {
-  const res = await nextApi.get<Note>(`/notes/${id}`, {});
+  const res = await nextApi.get<Note>(`/notes/${id}`);
   return res.data;
 }
 

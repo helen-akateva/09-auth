@@ -1,7 +1,8 @@
 import { cookies } from "next/headers";
-import { nextApi } from "./api";
+
 import { User } from "@/types/user";
 import { Note, NoteTag } from "@/types/note";
+import { nextApi } from "./api";
 
 interface FetchNotesResponse {
   notes: Note[];
