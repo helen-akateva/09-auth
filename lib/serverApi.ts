@@ -16,9 +16,9 @@ interface FetchNotesParams {
   sortBy?: "title" | "createdAt" | "updatedAt";
 }
 
-export const fetchServerNotes = async (
+export async function fetchServerNotes(
   params?: FetchNotesParams
-): Promise<FetchNotesResponse> => {
+): Promise<FetchNotesResponse> {
   const cookieStore = await cookies();
   const { data } = await nextApi.get<FetchNotesResponse>("/notes", {
     params,
@@ -27,9 +27,9 @@ export const fetchServerNotes = async (
     },
   });
   return data;
-};
+}
 
-export const getServerNoteById = async (id: string): Promise<Note> => {
+export async function getServerNoteById(id: string): Promise<Note> {
   const cookieStore = await cookies();
   const { data } = await nextApi.get<Note>(`/notes/${id}`, {
     headers: {
@@ -37,9 +37,9 @@ export const getServerNoteById = async (id: string): Promise<Note> => {
     },
   });
   return data;
-};
+}
 
-export const checkServerSession = async () => {
+export async function constcheckServerSession() {
   const cookieStore = await cookies();
 
   const res = await nextApi.get("/auth/session", {
@@ -49,9 +49,9 @@ export const checkServerSession = async () => {
   });
 
   return res;
-};
+}
 
-export const getServerUser = async (): Promise<User> => {
+export async function getServerUser(): Promise<User> {
   const cookieStore = await cookies();
   const { data } = await nextApi.get("/users/me", {
     headers: {
@@ -59,4 +59,4 @@ export const getServerUser = async (): Promise<User> => {
     },
   });
   return data;
-};
+}
