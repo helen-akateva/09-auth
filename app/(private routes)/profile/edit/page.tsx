@@ -1,48 +1,10 @@
-// import Image from "next/image";
-// import css from './EditProfilePage.module.css'
-
-// export default function EditProfileData() {
-//   return <main className={css.mainContent}>
-//   <div className={css.profileCard}>
-//     <h1 className={css.formTitle}>Edit Profile</h1>
-
-//     <Image src="avatar"
-//       alt="User Avatar"
-//       width={120}
-//       height={120}
-//       className={css.avatar}
-//     />
-
-//     <form className={css.profileInfo}>
-//       <div className={css.usernameWrapper}>
-//         <label htmlFor="username">Username:</label>
-//         <input id="username"
-//           type="text"
-//           className={css.input}
-//         />
-//       </div>
-
-//       <p>Email: user_email@example.com</p>
-
-//       <div className={css.actions}>
-//         <button type="submit" className={css.saveButton}>
-//           Save
-//         </button>
-//         <button type="button" className={css.cancelButton}>
-//           Cancel
-//         </button>
-//       </div>
-//     </form>
-//   </div>
-// </main>
-// ;
-// }
 
 "use client";
 import { getUser, updateUser } from "@/lib/api/clientApi";
 import { useAuthStore } from "@/lib/store/authStore";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { AxiosError } from "axios";
 import Image from "next/image";
 import css from './EditProfilePage.module.css';
 
@@ -52,29 +14,45 @@ export default function EditProfileData() {
   const setUser = useAuthStore((state) => state.setUser);
   const [username, setUsername] = useState("");
   const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState("");
 
   useEffect(() => {
     const fetchUserData = async () => {
       try {
         const userData = await getUser();
-        setUsername(userData.username);
+        setUsername(userData.username || userData.email);
         setLoading(false);
       } catch (error) {
         console.error("Failed to fetch user data:", error);
+        if (error instanceof AxiosError && error.response?.status === 401) {
+          router.push("/sign-in");
+        }
         setLoading(false);
       }
     };
     fetchUserData();
-  }, []);
+  }, [router]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError("");
+    setSaving(true);
+    
     try {
+      // Відправляємо name замість username
       const updatedUser = await updateUser({ name: username });
       setUser(updatedUser);
       router.push("/profile");
-    } catch (error) {
-      console.error("Failed to update user:", error);
+    } catch (err) {
+      console.error("Failed to update user:", err);
+      if (err instanceof AxiosError) {
+        setError(err.response?.data?.message || "Failed to update profile. Please try again.");
+      } else {
+        setError("Failed to update profile. Please try again.");
+      }
+    } finally {
+      setSaving(false);
     }
   };
 
@@ -82,19 +60,49 @@ export default function EditProfileData() {
     router.push("/profile");
   };
 
-  if (loading) return <p>Loading...</p>;
+  if (loading) {
+    return (
+      <main className={css.mainContent}>
+        <div className={css.profileCard}>
+          <p>Loading...</p>
+        </div>
+      </main>
+    );
+  }
 
   return (
     <main className={css.mainContent}>
       <div className={css.profileCard}>
         <h1 className={css.formTitle}>Edit Profile</h1>
-        <Image
-          src="https://example.com/avatar.jpg"
-          alt="User Avatar"
-          width={120}
-          height={120}
-          className={css.avatar}
-        />
+        
+        {user?.avatar ? (
+          <Image
+            src={user.avatar}
+            alt="User Avatar"
+            width={120}
+            height={120}
+            className={css.avatar}
+          />
+        ) : (
+          <div 
+            style={{
+              width: 120, 
+              height: 120, 
+              borderRadius: '50%',
+              backgroundColor: '#e0e0e0',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              fontSize: '48px',
+              fontWeight: 'bold',
+              color: '#666',
+              margin: '0 auto 20px'
+            }}
+          >
+            {username?.[0]?.toUpperCase() || user?.email?.[0]?.toUpperCase() || 'U'}
+          </div>
+        )}
+        
         <form className={css.profileInfo} onSubmit={handleSubmit}>
           <div className={css.usernameWrapper}>
             <label htmlFor="username">Username:</label>
@@ -104,17 +112,32 @@ export default function EditProfileData() {
               className={css.input}
               value={username}
               onChange={(e) => setUsername(e.target.value)}
+              disabled={saving}
+              required
             />
           </div>
+          
           <p>Email: {user?.email}</p>
+          
           <div className={css.actions}>
-            <button type="submit" className={css.saveButton}>
-              Save
+            <button 
+              type="submit" 
+              className={css.saveButton}
+              disabled={saving}
+            >
+              {saving ? "Saving..." : "Save"}
             </button>
-            <button type="button" className={css.cancelButton} onClick={handleCancel}>
+            <button 
+              type="button" 
+              className={css.cancelButton}
+              onClick={handleCancel}
+              disabled={saving}
+            >
               Cancel
             </button>
           </div>
+          
+          {error && <p className={css.error}>{error}</p>}
         </form>
       </div>
     </main>
