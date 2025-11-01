@@ -39,7 +39,7 @@ export async function getServerNoteById(id: string): Promise<Note> {
   return data;
 }
 
-export async function constcheckServerSession() {
+export async function checkServerSession() {
   const cookieStore = await cookies();
 
   const res = await nextApi.get("/auth/session", {
